@@ -1,0 +1,8 @@
+ codec | bronze_mb 
+-------+-----------
+ GZIP  |     182.6 
+(1 row)
+ codec | bronze_mb 
+-------+-----------
+ ZSTD  |     187.7 
+(1 row)

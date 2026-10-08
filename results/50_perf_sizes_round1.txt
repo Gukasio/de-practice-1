@@ -1,0 +1,16 @@
+ codec | bronze_mb 
+-------+-----------
+ GZIP  |     182.6 
+(1 row)
+ codec  | bronze_mb 
+--------+-----------
+ SNAPPY |     258.9 
+(1 row)
+ codec | bronze_mb 
+-------+-----------
+ NONE  |     489.6 
+(1 row)
+ codec | bronze_mb 
+-------+-----------
+ ZSTD  |     187.7 
+(1 row)

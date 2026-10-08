@@ -1,0 +1,12 @@
+  source   |   tbl    | write_sec 
+-----------+----------+-----------
+ load-GZIP | customer |       4.0 
+ load-GZIP | orders   |       9.1 
+ load-GZIP | lineitem |      26.7 
+(3 rows)
+  source   |   tbl    | write_sec 
+-----------+----------+-----------
+ load-ZSTD | customer |       3.5 
+ load-ZSTD | orders   |       5.4 
+ load-ZSTD | lineitem |      19.2 
+(3 rows)

@@ -1,0 +1,14 @@
+    source     |  state   | exec_sec 
+---------------+----------+----------
+ q3-GZIP-cold  | FINISHED |      3.1 
+ q3-GZIP-warm1 | FINISHED |      1.3 
+ q3-GZIP-warm2 | FINISHED |      1.1 
+ q3-GZIP-warm3 | FINISHED |      1.1 
+(4 rows)
+    source     |  state   | exec_sec 
+---------------+----------+----------
+ q3-ZSTD-cold  | FINISHED |      2.5 
+ q3-ZSTD-warm1 | FINISHED |      1.7 
+ q3-ZSTD-warm2 | FINISHED |      1.3 
+ q3-ZSTD-warm3 | FINISHED |      1.2 
+(4 rows)
