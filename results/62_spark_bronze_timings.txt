@@ -1,0 +1,7 @@
+Time taken: 1.169 seconds, Fetched 1 row(s)
+Time taken: 0.796 seconds, Fetched 3 row(s)
+Time taken: 0.154 seconds, Fetched 11 row(s)
+Time taken: 1.831 seconds, Fetched 3 row(s)
+Time taken: 0.322 seconds, Fetched 1 row(s)
+Time taken: 0.258 seconds, Fetched 1 row(s)
+Time taken: 2.961 seconds, Fetched 10 row(s)
