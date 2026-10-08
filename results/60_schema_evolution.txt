@@ -1,0 +1,71 @@
+--- исходная схема
+    Column    |  Type   | Extra | Comment 
+--------------+---------+-------+---------
+ orderkey     | bigint  |       |         
+ custkey      | bigint  |       |         
+ mktsegment   | varchar |       |         
+ orderdate    | date    |       |         
+ shippriority | integer |       |         
+(5 rows)
+ snapshots 
+-----------
+         1 
+(1 row)
+--- add column
+ADD COLUMN
+ orderkey | orderdate  | shippriority | orderpriority 
+----------+------------+--------------+---------------
+       96 | 1994-04-17 |            0 | NULL          
+      165 | 1993-01-30 |            0 | NULL          
+      256 | 1993-10-19 |            0 | NULL          
+(3 rows)
+ snapshots 
+-----------
+         1 
+(1 row)
+--- заполняем колонку из bronze
+MERGE: 147126 rows
+  orderpriority  | orders 
+-----------------+--------
+ 1-URGENT        |  29357 
+ 2-HIGH          |  29560 
+ 3-MEDIUM        |  29264 
+ 4-NOT SPECIFIED |  29426 
+ 5-LOW           |  29519 
+(5 rows)
+     snapshot_id     | operation |        committed_at         
+---------------------+-----------+-----------------------------
+  469044585011743125 | append    | 2026-10-08 11:08:56.828 UTC 
+ 4797679651194134575 | overwrite | 2026-10-08 11:09:21.732 UTC 
+(2 rows)
+--- rename column
+RENAME COLUMN
+ orderkey | ship_priority |  orderpriority  
+----------+---------------+-----------------
+       96 |             0 | 2-HIGH          
+      165 |             0 | 4-NOT SPECIFIED 
+      256 |             0 | 4-NOT SPECIFIED 
+(3 rows)
+запрос со старым именем:
+Query 20261008_110925_00023_mxvd4 failed: line 1:8: Column 'shippriority' cannot be resolved
+LINE 1: SELECT shippriority FROM silver.tpch.building_orders LIMIT 1
+               ^
+
+--- первый снапшот
+ orderkey | custkey | mktsegment | orderdate  | shippriority 
+----------+---------+------------+------------+--------------
+       96 |  107779 | BUILDING   | 1994-04-17 |            0 
+      165 |   27238 | BUILDING   | 1993-01-30 |            0 
+      256 |  124831 | BUILDING   | 1993-10-19 |            0 
+(3 rows)
+--- возвращаем имя
+RENAME COLUMN
+    Column     |  Type   | Extra | Comment 
+---------------+---------+-------+---------
+ orderkey      | bigint  |       |         
+ custkey       | bigint  |       |         
+ mktsegment    | varchar |       |         
+ orderdate     | date    |       |         
+ shippriority  | integer |       |         
+ orderpriority | varchar |       |         
+(6 rows)
