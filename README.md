@@ -199,6 +199,54 @@ SELECT count(*) FROM silver.tpch.order_lines FOR VERSION AS OF <snapshot_id>;
 ALTER TABLE silver.tpch.order_lines EXECUTE rollback_to_snapshot(<snapshot_id>);
 ```
 
+Вывод schema evolution (`results/60_schema_evolution.txt`, сокращённо):
+
+```
+--- add column
+ADD COLUMN
+ orderkey | orderdate  | shippriority | orderpriority
+----------+------------+--------------+---------------
+       96 | 1994-04-17 |            0 | NULL
+      165 | 1993-01-30 |            0 | NULL
+ snapshots
+-----------
+         1
+--- заполняем колонку из bronze
+MERGE: 147126 rows
+     snapshot_id     | operation |        committed_at
+---------------------+-----------+-----------------------------
+  469044585011743125 | append    | 2026-10-08 11:08:56.828 UTC
+ 4797679651194134575 | overwrite | 2026-10-08 11:09:21.732 UTC
+--- rename column
+запрос со старым именем:
+Query 20261008_110925_00023_mxvd4 failed: line 1:8: Column 'shippriority' cannot be resolved
+```
+
+Вывод восстановления (`results/61_time_travel.txt`, сокращённо):
+
+```
+--- до удаления
+ rows_cnt |     revenue
+----------+-----------------
+    30519 | 1.11527124351E9
+--- удаляем
+ rows_cnt |    revenue
+----------+----------------
+     4832 | 1.7502580669E8
+     snapshot_id     | operation |        committed_at
+---------------------+-----------+-----------------------------
+ 8191506490746054251 | append    | 2026-10-08 11:08:58.338 UTC
+ 3780883914606659384 | delete    | 2026-10-08 11:09:31.859 UTC
+--- старая версия
+ rows_cnt
+----------
+    30519
+--- откат
+ rows_cnt |     revenue
+----------+-----------------
+    30519 | 1.11527124351E9
+```
+
 ### 6.2. Подключить инструмент к lakehouse
 
 | Инструмент | Почему выбрал |
@@ -219,7 +267,22 @@ docker run --rm --memory 2g \
 
 В `spark/spark-defaults.conf` прописан каталог bronze через REST Lakekeeper и доступ к Silo.
 
-Что сделал: остановил Trino и запустил Spark. Spark увидел схему tpch и три таблицы bronze, посчитал строки (150 000 / 1 500 000 / 6 001 215) и выполнил Q3 по bronze примерно за 3 с — ответ тот же, что в Gold. Вывод в `results/62_spark_bronze.txt`.
+Что сделал: остановил Trino и запустил Spark. Spark увидел схему tpch и три таблицы bronze, посчитал строки (150 000 / 1 500 000 / 6 001 215) и выполнил Q3 по bronze примерно за 3 с — ответ тот же, что в Gold. Вывод в `results/62_spark_bronze.txt`, сокращённо:
+
+```
+tpch
+customer
+orders
+lineitem
+customer	150000
+orders	1500000
+lineitem	6001215
+2456423	406181.0111	1995-03-05	0
+3459808	405838.69889999996	1995-03-04	0
+492164	390324.061	1995-02-19	0
+...
+Time taken: 2.961 seconds, Fetched 10 row(s)
+```
 
 ## 7. Выводы
 
