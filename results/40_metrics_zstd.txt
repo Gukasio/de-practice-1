@@ -1,0 +1,18 @@
+            tbl            | rows_cnt | files |   bytes   | size_mb 
+---------------------------+----------+-------+-----------+---------
+ bronze.customer           |   150000 |     1 |   8213827 |     7.8 
+ bronze.lineitem           |  6001215 |     2 | 151966117 |   144.9 
+ bronze.orders             |  1500000 |     2 |  36683024 |    35.0 
+ gold.q3_shipping_priority |       10 |     1 |       846 |     0.0 
+ silver.building_orders    |   147126 |     1 |    715747 |     0.7 
+ silver.order_lines        |    30519 |     1 |    427429 |     0.4 
+(6 rows)
+            tbl            |               key               |  value  
+---------------------------+---------------------------------+---------
+ bronze.lineitem           | write.format.default            | PARQUET 
+ bronze.lineitem           | write.parquet.compression-codec | zstd    
+ gold.q3_shipping_priority | write.format.default            | PARQUET 
+ gold.q3_shipping_priority | write.parquet.compression-codec | zstd    
+ silver.order_lines        | write.format.default            | PARQUET 
+ silver.order_lines        | write.parquet.compression-codec | zstd    
+(6 rows)

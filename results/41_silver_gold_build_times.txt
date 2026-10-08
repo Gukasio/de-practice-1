@@ -1,0 +1,11 @@
+              step              | exec_sec 
+--------------------------------+----------
+ silver.tpch.building_orders    |      2.3 
+ silver.tpch.order_lines        |      1.8 
+ gold.tpch.q3_shipping_priority |      0.3 
+ silver.tpch.building_orders    |      4.1 
+ silver.tpch.order_lines        |      3.7 
+ gold.tpch.q3_shipping_priority |      0.6 
+ gold-read                      |      0.2 
+ gold-read                      |      0.1 
+(8 rows)

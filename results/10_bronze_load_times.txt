@@ -1,0 +1,6 @@
+   tbl    |  state   | exec_sec 
+----------+----------+----------
+ customer | FINISHED |      2.4 
+ orders   | FINISHED |      5.2 
+ lineitem | FINISHED |     15.8 
+(3 rows)
