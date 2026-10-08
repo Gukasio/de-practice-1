@@ -65,27 +65,27 @@ BI не поднимал, в 6.2 выбрал Spark.
 Полностью в `infra/up.sh`, основное:
 
 ```bash
-# хранилище
+#хранилище
 docker run -d --name p1-minio -p 9000:9000 -p 9001:9001 \
   -e MINIO_ROOT_USER=minioadmin -e MINIO_ROOT_PASSWORD=minioadmin \
   -v p1-minio-data:/data pgsty/silo:latest server /data --console-address ":9001"
 
-# бакеты bronze, silver, gold
+#бакеты bronze, silver, gold
 docker run --rm --entrypoint /bin/sh --add-host host.docker.internal:host-gateway pgsty/mc:latest \
   -c "mc alias set m http://host.docker.internal:9000 minioadmin minioadmin && mc mb m/bronze m/silver m/gold"
 
-# postgres для lakekeeper
+#postgres для lakekeeper
 docker run -d --name p1-pg -e POSTGRES_PASSWORD=postgres -p 5432:5432 \
   -v p1-pg-data:/var/lib/postgresql/data postgres:17
 
-# lakekeeper: миграции и сервер
+#lakekeeper
 docker run --rm -e ... quay.io/lakekeeper/catalog:latest-main migrate
 docker run -d --name p1-lakekeeper -e ... -p 8181:8181 quay.io/lakekeeper/catalog:latest-main serve
 
-# warehouse на каждый слой (bronze, silver, gold)
+#warehouse на каждый слой
 curl -X POST http://localhost:8181/management/v1/warehouse -d '{"warehouse-name": "bronze", ...}'
 
-# trino, лимит памяти 2 ГБ из-за 8 ГБ на ноуте
+#trino лимит памяти 2 ГБ из-за 8 ГБ на ноуте
 docker run -d --name p1-trino --memory 2g -p 8080:8080 \
   -v "$PWD/infra/catalog:/etc/trino/catalog" trinodb/trino:476
 ```
@@ -186,16 +186,16 @@ Gold сверил с исходным запросом Q3 по `tpch.sf1` (`sql/
 | Пример скрипта восстановления из снапшота | Удалил часть строк из order_lines (было 30 519, стало 4 832), посмотрел старую версию через `FOR VERSION AS OF` и откатил таблицу на неё, снова 30 519. Скрипт `sql/evolution/time_travel.sh`, код ниже |
 
 ```sql
--- текущий снапшот
+--текущий снапшот
 SELECT snapshot_id FROM silver.tpch."order_lines$refs" WHERE name = 'main';
 
--- "случайно" удаляем данные
+--случайно удаляем данные
 DELETE FROM silver.tpch.order_lines WHERE orderdate >= DATE '1995-01-01';
 
--- смотрим как было
+--смотрим как было
 SELECT count(*) FROM silver.tpch.order_lines FOR VERSION AS OF <snapshot_id>;
 
--- откатываем
+--откатываем
 ALTER TABLE silver.tpch.order_lines EXECUTE rollback_to_snapshot(<snapshot_id>);
 ```
 
